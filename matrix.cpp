@@ -1,11 +1,3 @@
-/******************************************************************************
-
-                              Online C++ Compiler.
-               Code, Compile, Run and Debug C++ program online.
-Write your code in this editor and press "Run" button to compile and execute it.
-
-*******************************************************************************/
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -137,31 +129,6 @@ class Matrix
             }
         }
         
-        void transpose_2(Matrix matrix)
-        {
-            int rowSize = matrix.rowSize();
-            int colSize = matrix.colSize();
-            
-            int row = this->matrix.size();
-            
-            if (row > 0)
-            {
-                for (int i = 0; i < row; i++)
-                {
-                    this->matrix.erase(this->matrix.begin() + i);
-                }
-            }
-            
-            for (int i = 0; i < colSize; i++)
-            {
-                this->matrix.emplace_back(vector<int>());
-                for (int j = 0; j < rowSize; j++)
-                {
-                    this->matrix[i].emplace_back(matrix.matrixElement(j, i));
-                }
-            }
-        }
-        
         void multiply(Matrix matrix1, Matrix matrix2)
         {
             int rowM1 = matrix1.rowSize();
@@ -236,7 +203,6 @@ int main()
     Matrix d;
     
     // Transpose
-    d.transpose_2(b);
     b.transpose();
     
     // Multiplication
@@ -244,8 +210,6 @@ int main()
     
     // Print Matrix
     c.printMatrix();
-    cout << endl;
-    d.printMatrix();
     cout << endl;
     b.printMatrix();
     
