@@ -1,64 +1,69 @@
+/******************************************************************************
+
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+
+*******************************************************************************/
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
-typedef vector<vector<int>> matrix;
+typedef vector<vector<int>> mat;
 
 class Matrix
 {
     private:
-        matrix mat;
+        mat matrix;
     
-        int isSquare()
+        bool isMatrixSquare()
         {
-            int row_size = this->mat.size();
-            int col_size = this->mat[0].size();
-            //cout << row_size << col_size << endl;
-            // 1 -> Same size
-            // 0 -> Unequal size
-            int ret_val;
-            row_size == col_size ? ret_val = 1 : ret_val = 0;
-            return (ret_val);
+            int rowSize = this->matrix.size();
+            int colSize = this->matrix[0].size();
+
+            return (rowSize == colSize);
         }
         
         int skewedMatrix()
         {
-            int row_size = this->mat.size();
-            int col_size = this->mat[0].size();
-            
             // 1 -> Row > Column
             // 0 -> Column > Row
-            int ret_val;
-            row_size > col_size ? ret_val = 0 : ret_val = 1;
-            return (ret_val);
-        }
-        bool isMultiplicationValid(Matrix a, Matrix b)
-        {
-            int row_1 = a.row_size();
-            int col_1 = a.col_size();
-            int row_2 = b.row_size();
-            int col_2 = b.col_size();
             
-            if (row_2 == col_1)
+            int rowSize = this->matrix.size();
+            int colSize = this->matrix[0].size();
+            
+            int retVal;
+            rowSize > colSize ? retVal = 0 : retVal = 1;
+            return (retVal);
+        }
+        
+        bool isValidMultiplicationOperation(Matrix matrix1, Matrix matrix2)
+        {
+            int rowM1 = matrix1.rowSize();
+            int colM1 = matrix1.colSize();
+            int rowM2 = matrix2.rowSize();
+            int colM2 = matrix2.colSize();
+            
+            return (rowM2 == colM1);
+        }
+        
+        int rowSize()
+        {
+            return (this->matrix.size());
+        }
+        
+        int colSize()
+        {
+            return (this->matrix[0].size());
+        }
+        
+        int matrixElement(int row, int col)
+        {
+            if (row >= 0 && row < this->matrix.size() && col >= 0 && col < this->matrix[0].size())
             {
-                return (true);
-            }
-            return (false);
-        }
-        int row_size()
-        {
-            return (this->mat.size());
-        }
-        int col_size()
-        {
-            return (this->mat[0].size());
-        }
-        int matrix_element(int i, int j)
-        {
-            if (i >= 0 && i < this->mat.size() && j >= 0 && j < this->mat[0].size())
-            {
-                return (this->mat[i][j]);   
+                return (this->matrix[row][col]);   
             }
             else
             {
@@ -69,11 +74,12 @@ class Matrix
     public:
         Matrix()
         {
-            this->mat = {};
+            this->matrix = {};
         }
-        Matrix(matrix val)
+        
+        Matrix(mat doubleVector)
         {
-            this->mat = val;
+            this->matrix = doubleVector;
         }
         
         void transpose()
@@ -81,168 +87,167 @@ class Matrix
             // Skew = -1; Square matrix
             // Skew = 0; Skewed Row matrix
             // Skew = 1; Skewed Column matrix
-            int square = isSquare();
             int skew = -1;
-            if (square == 0)
+            if (!isMatrixSquare())
             {
                 skew = skewedMatrix();
-                //cout << skew << endl;
             }
-            int row_size = this->mat.size();
-            int col_size = this->mat[0].size();
-            int min_size = min(row_size, col_size);
-            int max_size = max(row_size, col_size);
+            int rowSize = this->matrix.size();
+            int colSize = this->matrix[0].size();
+            int minSize = min(rowSize, colSize);
+            int maxSize = max(rowSize, colSize);
             int temp;
             
-            for (int i = 0; i < min_size; i++)
+            for (int row = 0; row < minSize; row++)
             {
-                for(int j = i + 1; j < min_size; j++)
+                for(int col = row + 1; col < minSize; col++)
                 {
-                    temp = this->mat[i][j];
-                    this->mat[i][j] = this->mat[j][i];
-                    this->mat[j][i] = temp;
+                    temp = this->matrix[row][col];
+                    this->matrix[row][col] = this->matrix[col][row];
+                    this->matrix[col][row] = temp;
                 }
             }
             
             if (skew == 0)
             {
-                for (int i = min_size; i < max_size; i++)
+                for (int row = minSize; row < maxSize; row++)
                 {
-                    for (int j = 0; j < min_size; j++)
+                    for (int col = 0; col < minSize; col++)
                     {
-                        this->mat[j].push_back(this->mat[i][j]);
+                        this->matrix[col].emplace_back(this->matrix[row][col]);
                     }
-                    this->mat.erase(this->mat.begin() + i);
+                    this->matrix.erase(this->matrix.begin() + row);
                 }
             }
             else if (skew == 1)
             {
-                for (int i = min_size; i < max_size; i++)
+                for (int row = minSize; row < maxSize; row++)
                 {
-                    this->mat.push_back(vector<int>());
-                    for (int j = 0; j < min_size; j++)
+                    this->matrix.emplace_back(vector<int>());
+                    for (int col = 0; col < minSize; col++)
                     {
-                        this->mat[i].push_back(this->mat[j][i]);
+                        this->matrix[row].emplace_back(this->matrix[col][row]);
                     }
                 }
                 
-                for (int i = 0; i < min_size; i++)
+                for (int row = 0; row < minSize; row++)
                 {
-                    this->mat[i].erase(this->mat[i].begin() + min_size);
+                    this->matrix[row].erase(this->matrix[row].begin() + minSize);
                 }
             }
-            
-            //cout << matrix.size() << " - " << matrix[0].size() << endl;
         }
         
-        void transpose_2(Matrix mat)
+        void transpose_2(Matrix matrix)
         {
-            int row_size = mat.row_size();
-            int col_size = mat.col_size();
+            int rowSize = matrix.rowSize();
+            int colSize = matrix.colSize();
             
-            int row = this->mat.size();
+            int row = this->matrix.size();
             
             if (row > 0)
             {
                 for (int i = 0; i < row; i++)
                 {
-                    this->mat.erase(this->mat.begin() + i);
+                    this->matrix.erase(this->matrix.begin() + i);
                 }
             }
             
-            for (int i = 0; i < col_size; i++)
+            for (int i = 0; i < colSize; i++)
             {
-                this->mat.push_back(vector<int>());
-                for (int j = 0; j < row_size; j++)
+                this->matrix.emplace_back(vector<int>());
+                for (int j = 0; j < rowSize; j++)
                 {
-                    this->mat[i].push_back(mat.matrix_element(j, i));
+                    this->matrix[i].emplace_back(matrix.matrixElement(j, i));
                 }
             }
         }
         
-        void multiplication(Matrix a, Matrix b)
+        void multiply(Matrix matrix1, Matrix matrix2)
         {
-            int row_1 = a.row_size();
-            int col_1 = a.col_size();
-            int row_2 = b.row_size();
-            int col_2 = b.col_size();
-            //cout << row_1 << col_1 << row_2 << col_2 << endl;
-            if (!isMultiplicationValid(a, b))
+            int rowM1 = matrix1.rowSize();
+            int colM1 = matrix1.colSize();
+            int rowM2 = matrix2.rowSize();
+            int colM2 = matrix2.colSize();
+            if (!isValidMultiplicationOperation(matrix1, matrix2))
             {
                 //Raise Exception
                 return;
             }
             
-            int row = this->mat.size();
-            cout << row << endl;
+            int row = this->matrix.size();
             if (row > 0)
             {
                 for (int i = 0; i < row; i++)
                 {
-                    this->mat.erase(this->mat.begin() + i);
+                    this->matrix.erase(this->matrix.begin() + i);
                 }
             }
             
-            //Matrix ret_matrix;
-            
-            for (int i = 0; i < row_1; i++)
+            for (int i = 0; i < rowM1; i++)
             {
-                this->mat.push_back(vector<int>());
-                for (int j = 0; j < col_2; j++)
+                this->matrix.emplace_back(vector<int>());
+                for (int j = 0; j < colM2; j++)
                 {
-                    this->mat[i].push_back(0);
+                    this->matrix[i].emplace_back(0);
                 }
             }
             
-            for (int i = 0; i < row_1; i++)
+            for (int i = 0; i < rowM1; i++)
             {
-                for (int j = 0; j < col_2; j++)
+                for (int j = 0; j < colM2; j++)
                 {
-                    for (int k = 0; k < col_1; k++)
+                    for (int k = 0; k < colM1; k++)
                     {
-                        this->mat[i][j] += a.mat[i][k] * b.mat[k][j];
+                        this->matrix[i][j] += matrix1.matrix[i][k] * matrix2.matrix[k][j];
                     }
                 }
             }
         }
         
-        void print_matrix()
+        void printMatrix()
         {
-            int row = this->mat.size();
+            int row = this->matrix.size();
             if (row == 0)
             {
                 return;
             }
-            int col = this->mat[0].size();
+            int col = this->matrix[0].size();
             
             for (int i = 0; i < row; i++)
             {
                 for (int j = 0; j < col; j++)
                 {
-                    cout << this->mat[i][j] << "\t";
+                    cout << this->matrix[i][j] << "\t";
                 }
-                cout << endl;
+                cout << "\n";
             }
         }
 };
 
 int main()
 {
-    matrix m1 = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
-    matrix m2 = {{1,2,3},{4,5,6},{7,8,9}};
+    // Matrix Initialization
+    mat m1 = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
+    mat m2 = {{1,2,3},{4,5,6},{7,8,9}};
     
     Matrix a(m1);
     Matrix b(m2);
     Matrix c;
     Matrix d;
+    
+    // Transpose
     d.transpose_2(b);
     b.transpose();
-    c.multiplication(b,a);
-    c.print_matrix();
+    
+    // Multiplication
+    c.multiply(b,a);
+    
+    // Print Matrix
+    c.printMatrix();
     cout << endl;
-    d.print_matrix();
+    d.printMatrix();
     cout << endl;
-    b.print_matrix();
+    b.printMatrix();
     
     return 0;
 }
