@@ -31,6 +31,9 @@ def binary_search(matrix, target, row, low, high):
     while (low <= high):
         middle = (low + high) // 2
         
+        if middle >= len(matrix[row]):
+            return (False)
+        
         if matrix[row][middle] == target:
             return (True)
         else:
